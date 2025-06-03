@@ -31,7 +31,7 @@ st.markdown("""
 st.sidebar.header("Filters")
 
 # Neighborhood filter (only single select unfortunately)
-neighborhood = st.sidebar.selectbox("Neighbourhood", ["All"] + sorted(filtered_data['neighbourhood_cleansed'].unique()))
+neighborhood = st.sidebar.selectbox("Neighborhood", ["All"] + sorted(filtered_data['neighbourhood_cleansed'].unique()))
 if neighborhood == "All":
     neighborhoods = filtered_data['neighbourhood_cleansed'].unique()
 else:
@@ -82,10 +82,10 @@ with st.expander("Room Type Listings Count"):
     st.altair_chart(chart2, use_container_width=True)
 
 # Stacked Bar Chart of Average Revenue by Neighborhood and Room Type
-st.subheader("Stacked Bar Chart: Average Revenue by Neighbourhood and Room Type")
+st.subheader("Stacked Bar Chart: Average Revenue by Neighborhood and Room Type")
 mean_revenue = filtered.groupby(['neighbourhood_cleansed', 'room_type'])['estimated_revenue_l365d'].mean().reset_index()
 bar_chart = alt.Chart(mean_revenue).mark_bar().encode(
-    x=alt.X('neighbourhood_cleansed:N', sort='-y', title='Neighbourhood',
+    x=alt.X('neighbourhood_cleansed:N', sort='-y', title='Neighborhood',
             axis=alt.Axis(labelOverlap=False)),
     y=alt.Y('estimated_revenue_l365d:Q', title='Avg Revenue'),
     color=alt.Color('room_type:N', title='Room Type'),
