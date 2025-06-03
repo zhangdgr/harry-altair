@@ -18,6 +18,7 @@ filtered_data = listings_data[
 
 st.title("Airbnb Revenue in Barcelona: The City of Counts")
 
+# I want to explain the variables used in my vizes so they can be completely understood by the viewer
 st.markdown("""
 ### Variables Used in Graphs Defined
 - **Neighborhood**: Neighborhood where listing is located.
@@ -52,16 +53,46 @@ filtered = filtered_data[
     (filtered_data['room_type'].isin(room_types))
 ]
 
+# These two collapsible charts are used to help decide what categories to filter by
+st.subheader("Static Bar Charts: Counts of Listings Within Each Neighborhood & Room Type")
+st.markdown("Hopefully these two graphs can help you decide which neighborhoods and room types to filter by while exploring!")
+
+# Collapsible!!! Neighborhood Bar Chart to show counts to viewer
+with st.expander("Neighborhood Listings Count"):
+    neighborhood_count = listings_data['neighbourhood_cleansed'].value_counts().reset_index()
+    neighborhood_count.columns = ['neighbourhood_cleansed', 'count']
+    chart1 = alt.Chart(neighborhood_count).mark_bar().encode(
+        x=alt.X('neighbourhood_cleansed:N', sort='-y', title='Neighborhood',
+                axis=alt.Axis(labelOverlap=False)),
+        y=alt.Y('count:Q', title='Count of Listings'),
+        tooltip=['neighbourhood_cleansed', 'count']
+    )
+    st.altair_chart(chart1, use_container_width=True)
+
+# Collapsible!!! Room Type Bar Chart to show counts to viewer
+with st.expander("Room Type Listings Count"):
+    roomtype_count = listings_data['room_type'].value_counts().reset_index()
+    roomtype_count.columns = ['room_type', 'count']
+    chart2 = alt.Chart(roomtype_count).mark_bar().encode(
+        x=alt.X('room_type:N', sort='-y', title='Room Type',
+                axis=alt.Axis(labelAngle=0, labelOverlap=False)),
+        y=alt.Y('count:Q', title='Count of Listings'),
+        tooltip=['room_type', 'count']
+    )
+    st.altair_chart(chart2, use_container_width=True)
+
 # Stacked Bar Chart of Average Revenue by Neighborhood and Room Type
 st.subheader("Stacked Bar Chart: Average Revenue by Neighbourhood and Room Type")
 mean_revenue = filtered.groupby(['neighbourhood_cleansed', 'room_type'])['estimated_revenue_l365d'].mean().reset_index()
 bar_chart = alt.Chart(mean_revenue).mark_bar().encode(
-    x=alt.X('neighbourhood_cleansed:N', sort='-y', title='Neighbourhood'),
+    x=alt.X('neighbourhood_cleansed:N', sort='-y', title='Neighbourhood',
+            axis=alt.Axis(labelOverlap=False)),
     y=alt.Y('estimated_revenue_l365d:Q', title='Avg Revenue'),
     color=alt.Color('room_type:N', title='Room Type'),
     tooltip=['neighbourhood_cleansed', 'room_type', 'estimated_revenue_l365d']
 )
 st.altair_chart(bar_chart, use_container_width=True)
+
 
 # Review Score vs Revenue Scatterplot w/ Zooming and Panning
 st.subheader("Scatterplot: Review Score vs Estimated Revenue")
